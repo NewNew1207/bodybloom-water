@@ -85,6 +85,15 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
+.chips.sub{gap:6px;margin-top:-2px}
+.chips.sub .chip{padding:6px 12px;font-size:.85rem;border-color:var(--l1);background:var(--bg)}
+.chips.sub .chip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.mix{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.mixrow{display:grid;grid-template-columns:minmax(0,1fr) 64px 40px;gap:10px;align-items:center;font-size:.88rem}
+.mixrow b{font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mixrow span{font-variant-numeric:tabular-nums;text-align:right;color:var(--muted);font-weight:700}
+.mixbar{grid-column:1/-1;height:8px;border-radius:999px;background:var(--l0);overflow:hidden;margin-top:-4px}
+.mixbar i{display:block;height:100%;border-radius:999px;background:var(--l3)}
 .chip{flex:none;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;font-weight:700;font-size:.9rem}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
@@ -266,6 +275,7 @@ header{align-items:center}
   <section class="section" data-t-aria="addAria" aria-label="Drankje toevoegen">
     <div class="label" data-t="whatDrink">Wat drink je?</div>
     <div class="chips" id="chips"></div>
+    <div class="chips sub" id="brands" role="group" data-t-aria="brandAria" aria-label="Welk water?"></div>
     <button class="favbtn" id="favBtn" type="button" hidden>
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M13 3h6v4l3 4v16a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V11l3-4z"/><path d="M10 16h12M10 21h12"/></svg>
       <span id="favLbl"></span><b id="favMlTxt"></b>
@@ -366,6 +376,7 @@ header{align-items:center}
       <div class="cal" id="cal"></div>
       <div class="legend" id="legend"></div>
       <div class="mstats" id="mstats"></div>
+      <div class="mix" id="mix" hidden></div>
       <button class="btn ghost pdfbtn" id="pdfBtn" type="button">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>
         <span id="pdfLbl" data-t="pdfBtn">Rapport als PDF</span>
@@ -459,6 +470,7 @@ header{align-items:center}
       rTr:"Training",rYes:"ja",rPage:"Pagina {p}/{n}",rAvgHead:"Gem.",rNoData:"Nog geen gegevens voor deze maand.",rFile:"Body-Bloom-drinkrapport-{m}.pdf",
       favTitle:"Mijn fles",favNameLbl:"Naam van je fles",favMlLbl:"Inhoud (ml)",favHint:"Vul een inhoud in en je fles verschijnt als snelknop bovenaan.",favAdd:"Voeg {name} toe ({ml} ml)",toast:"{ml} ml {type} toegevoegd",undo:"Ongedaan",
       types:{water:"Water",thee:"Thee",citroen:"Water + citroen",koffie:"Koffie",smoothie:"Smoothie",soep:"Soep"},
+      brands:{hepar:"Hépar",spa:"Spa Reine",panna:"Acqua Panna",other:"Ander water"},brandAria:"Welk water?",mixTitle:"Wat je dronk",
       tips:[
         "Begin je dag met een glas water, nog voor de koffie.",
         "Op een infrarood trainingsdag zweet je meer. Drink al een glas voor je naar je sessie vertrekt.",
@@ -510,6 +522,7 @@ header{align-items:center}
       rTr:"Entraînement",rYes:"oui",rPage:"Page {p}/{n}",rAvgHead:"Moy.",rNoData:"Pas encore de données pour ce mois.",rFile:"Body-Bloom-rapport-hydratation-{m}.pdf",
       favTitle:"Ma bouteille",favNameLbl:"Nom de ta bouteille",favMlLbl:"Contenance (ml)",favHint:"Indique une contenance et ta bouteille apparaît en raccourci en haut.",favAdd:"Ajouter {name} ({ml} ml)",toast:"{ml} ml ajoutés ({type})",undo:"Annuler",
       types:{water:"Eau",thee:"Thé",citroen:"Eau + citron",koffie:"Café",smoothie:"Smoothie",soep:"Soupe"},
+      brands:{hepar:"Hépar",spa:"Spa Reine",panna:"Acqua Panna",other:"Autre eau"},brandAria:"Quelle eau ?",mixTitle:"Ce que tu as bu",
       tips:[
         "Commence ta journée par un verre d'eau, avant même le café.",
         "Un jour d'entraînement infrarouge, tu transpires davantage. Bois déjà un verre avant de partir pour ta séance.",
@@ -525,10 +538,11 @@ header{align-items:center}
     }
   };
   const TYPE_KEYS=["water","thee","citroen","koffie","smoothie","soep"];
+  const BRAND_KEYS=["hepar","spa","panna","other"];
   const CACHE="bbwater-v1",LANGKEY="bbwater-lang";
   const $=id=>document.getElementById(id);
 
-  const S={settings:{goal:2000,weight:null,bonus:500},days:{},type:"water",mode:"local",remote:null,lang:"nl",view:"w",mOff:0,logDay:null};
+  const S={settings:{goal:2000,weight:null,bonus:500},days:{},type:"water",mode:"local",remote:null,lang:"nl",view:"w",mOff:0,logDay:null,brand:"hepar"};
   const SESS_WINDOW=120;
   const VIEWKEY="bbwater-view";
   const L=()=>I18N[S.lang]||I18N.nl;
@@ -562,8 +576,8 @@ header{align-items:center}
   }
 
   // ---------- local cache ----------
-  function loadCache(){try{const raw=localStorage.getItem(CACHE);if(raw){const c=JSON.parse(raw);if(c.settings)S.settings=Object.assign(S.settings,c.settings);if(c.days)S.days=c.days;if(c.type)S.type=c.type}}catch(e){}}
-  function saveCache(){try{localStorage.setItem(CACHE,JSON.stringify({settings:S.settings,days:S.days,type:S.type}))}catch(e){}}
+  function loadCache(){try{const raw=localStorage.getItem(CACHE);if(raw){const c=JSON.parse(raw);if(c.settings)S.settings=Object.assign(S.settings,c.settings);if(c.days)S.days=c.days;if(c.type)S.type=c.type;if(c.brand&&BRAND_KEYS.includes(c.brand))S.brand=c.brand}}catch(e){}}
+  function saveCache(){try{localStorage.setItem(CACHE,JSON.stringify({settings:S.settings,days:S.days,type:S.type,brand:S.brand}))}catch(e){}}
 
   // ---------- remote (per-person private store) ----------
   const pending={};
@@ -628,6 +642,17 @@ header{align-items:center}
   }
   function sum(day){return (day.entries||[]).reduce((a,e)=>a+(e.ml||0),0)}
   const typeName=k=>L().types[k]||L().types.water;
+  // label of one entry: the water brand when one was chosen, else the drink type
+  function mixKey(e){return e.type==="water"&&e.brand&&e.brand!=="other"?"w:"+e.brand:(e.type||"water")}
+  function mixLabel(k){return k.slice(0,2)==="w:"?(L().brands[k.slice(2)]||typeName("water")):typeName(k)}
+  const entryLabel=e=>mixLabel(mixKey(e));
+  function monthMix(base){
+    const tkey=todayKey();const dim=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();const m=new Map();
+    for(let n=1;n<=dim;n++){const k=key(new Date(base.getFullYear(),base.getMonth(),n));if(k>tkey)break;
+      ((S.days[k]||{}).entries||[]).forEach(e=>{const mk=mixKey(e);m.set(mk,(m.get(mk)||0)+(e.ml||0))})}
+    const total=[...m.values()].reduce((a,b)=>a+b,0);
+    return [...m.entries()].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([k,ml])=>({label:mixLabel(k),ml,p:total?ml/total:0}));
+  }
 
   let lastAdded=null,toastTimer=null;
   function showToast(txt){
@@ -638,9 +663,11 @@ header{align-items:center}
     ml=Math.round(Number(ml));if(!(ml>0))return;
     const isT=k===todayKey();const d=dayObj(k);
     const e={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:iso||new Date().toISOString(),ml,type:S.type};
+    if(S.type==="water")e.brand=S.brand;
     d.entries.push(e);if(isT)d.goal=goalFor(d,true);
     lastAdded={k,id:e.id};persist(k);render();
-    showToast(isT?tr("toast",{ml:fmt(ml),type:typeName(S.type).toLowerCase()}):tr("toastPast",{ml:fmt(ml),d:dayLabel(k,true)}));
+    const mk=mixKey(e);const lbl=mk.slice(0,2)==="w:"?mixLabel(mk):mixLabel(mk).toLowerCase();
+    showToast(isT?tr("toast",{ml:fmt(ml),type:lbl}):tr("toastPast",{ml:fmt(ml),d:dayLabel(k,true)}));
   }
   function add(ml){addTo(todayKey(),ml)}
   function removeFrom(k,id){
@@ -693,6 +720,10 @@ header{align-items:center}
     const chips=$("chips");
     if(!chips.children.length){TYPE_KEYS.forEach(k=>{const b=document.createElement("button");b.type="button";b.className="chip";b.dataset.k=k;b.addEventListener("click",()=>{S.type=k;saveCache();render()});chips.append(b)})}
     [...chips.children].forEach(b=>{b.textContent=typeName(b.dataset.k);b.setAttribute("aria-pressed",b.dataset.k===S.type?"true":"false")});
+    const brands=$("brands");
+    if(!brands.children.length){BRAND_KEYS.forEach(k=>{const b=document.createElement("button");b.type="button";b.className="chip";b.dataset.k=k;b.addEventListener("click",()=>{S.brand=k;saveCache();render()});brands.append(b)})}
+    brands.hidden=S.type!=="water";
+    [...brands.children].forEach(b=>{b.textContent=L().brands[b.dataset.k];b.setAttribute("aria-pressed",b.dataset.k===S.brand?"true":"false")});
 
     $("training").checked=!!day.training;
     $("bonusTxt").textContent=S.settings.bonus>0?tr("bonusOn",{b:fmt(S.settings.bonus)}):tr("bonusOff");
@@ -715,7 +746,7 @@ header{align-items:center}
     entries.forEach(e=>{
       const li=document.createElement("li");
       const tm=document.createElement("time");const dt=new Date(e.t);tm.dateTime=e.t;tm.textContent=dt.toLocaleTimeString(loc,{hour:"2-digit",minute:"2-digit"});
-      const ty=document.createElement("span");ty.textContent=typeName(e.type);
+      const ty=document.createElement("span");ty.textContent=entryLabel(e);
       const ml=document.createElement("span");ml.className="ml";ml.textContent=fmt(e.ml)+" ml";
       const del=document.createElement("button");del.type="button";del.className="del";del.textContent="×";del.setAttribute("aria-label",tr("del",{ml:e.ml,t:tm.textContent}));
       del.addEventListener("click",()=>removeFrom(vk,e.id));
@@ -859,8 +890,20 @@ header{align-items:center}
     $("cal").innerHTML=h;
     $("legend").innerHTML='<span><i style="background:var(--l1)"></i>'+tr("lgL1")+'</span><span><i style="background:var(--l2)"></i>'+tr("lgL2")+'</span><span><i style="background:var(--l3)"></i>'+tr("lgL3")+'</span><span><i class="dotk"></i>'+tr("lgTr")+"</span>";
     const liters=new Intl.NumberFormat(loc,{minimumFractionDigits:1,maximumFractionDigits:1});
+    $("mix").hidden=true;
     if(!logged){$("mstats").innerHTML='<p class="hint" style="grid-column:1/-1">'+tr("msNone")+"</p>";return}
     $("mstats").innerHTML='<div><b>'+bloom+'</b><span>'+tr("msBloom")+'</span></div><div><b>'+liters.format(total/logged/1000)+' L</b><span>'+tr("msAvg")+'</span></div><div><b>'+liters.format(total/1000)+' L</b><span>'+tr("msTotal")+"</span></div>";
+    const mix=monthMix(base);const box=$("mix");box.innerHTML="";
+    const head=document.createElement("div");head.className="label";head.textContent=tr("mixTitle");box.append(head);
+    mix.forEach(x=>{
+      const row=document.createElement("div");row.className="mixrow";
+      const n=document.createElement("b");n.textContent=x.label;
+      const l=document.createElement("span");l.textContent=liters.format(x.ml/1000)+" L";
+      const p=document.createElement("span");p.textContent=Math.round(x.p*100)+"%";
+      const bar=document.createElement("div");bar.className="mixbar";const fill=document.createElement("i");fill.style.width=(x.p*100).toFixed(1)+"%";bar.append(fill);
+      row.append(n,l,p,bar);box.append(row);
+    });
+    box.hidden=!mix.length;
   }
 
   $("tabW").addEventListener("click",()=>{S.view="w";try{localStorage.setItem(VIEWKEY,"w")}catch(e){}renderView()});
@@ -932,12 +975,11 @@ header{align-items:center}
       y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=5.6;
       D.weeks.forEach(w=>{font("normal",11,C.ink);T(w.label,M,y);T(w.pct,cx.pct,y,{align:"right"});T(w.tot,cx.tot,y,{align:"right"});T(w.bl,cx.bl,y,{align:"right"});y+=7});
     }
-    footer(1,2);
-
-    // page 2: day by day
-    doc.addPage();brand();
-    font("normal",11,C.muted);T(D.month,M,M+10);
-    y=section(D.dailyTitle,M+20);
+    // page 2+: day by day, then the drink mix; new page when the bottom margin is reached
+    const bottom=H-27;
+    function newPage(){doc.addPage();brand();font("normal",11,C.muted);T(D.month,M,M+10);return M+20}
+    y=newPage();
+    y=section(D.dailyTitle,y);
     if(!D.daily.length){font("normal",11,C.muted);T(D.noData,M,y+4)}
     else{
       const X={dr:M+72,gl:M+96,bar:M+102,bw:22,pct:M+136,tr:R};
@@ -945,6 +987,7 @@ header{align-items:center}
       y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=1;
       const rh=6.6;
       D.daily.forEach((d,i)=>{
+        if(y+rh>bottom){y=newPage()+4}
         if(i%2===0){doc.setFillColor(C.zebra);doc.rect(M,y,R-M,rh,"F")}
         const by=y+rh/2;
         font(d.hit?"bold":"normal",10.5,C.ink);T(d.label,M+1.5,by+1.3);
@@ -957,7 +1000,22 @@ header{align-items:center}
         y+=rh;
       });
     }
-    footer(2,2);
+    if(D.mix.length){
+      const need=12+D.mix.length*8;
+      if(y+12+need>bottom)y=newPage();else y+=12;
+      y=section(D.mixTitle,y);
+      const X={l:M+92,bar:M+98,bw:44,p:R};
+      D.mix.forEach(x=>{
+        font("bold",11,C.ink);T(x.label,M,y+1);
+        font("normal",11,C.ink);T(x.l,X.l,y+1,{align:"right"});
+        doc.setFillColor(C.l0);doc.roundedRect(X.bar,y-1.6,X.bw,2.8,1.4,1.4,"F");
+        doc.setFillColor(C.l3);doc.roundedRect(X.bar,y-1.6,Math.max(2.8,x.p*X.bw),2.8,1.4,1.4,"F");
+        font("bold",11,C.muted);T(x.pct,X.p,y+1,{align:"right"});
+        y+=8;
+      });
+    }
+    const n=doc.getNumberOfPages();
+    for(let p=1;p<=n;p++){doc.setPage(p);footer(p,n)}
     return doc;
   }
   /*PDF-END*/
@@ -1004,6 +1062,7 @@ header{align-items:center}
       calTitle:tr("rCal"),heads:[1,2,3,4,5,6,0].map(i=>L().days[i]),avgHead:tr("rAvgHead"),cal,
       legend:[{lv:1,t:tr("lgL1")},{lv:2,t:tr("lgL2")},{lv:3,t:tr("lgL3")},{dot:true,t:tr("lgTr")}],
       weeksTitle:tr("rWeeks"),wkCols:[tr("rWeekCol"),tr("rAvgPct"),tr("rTotalCol"),tr("rBloomCol")],weeks:logged?weeks:[],
+      mixTitle:tr("mixTitle"),mix:monthMix(base).map(x=>({label:x.label,l:lit.format(x.ml/1000)+" L",p:x.p,pct:Math.round(x.p*100)+"%"})),
       dailyTitle:tr("rDaily"),dCols:[tr("rDate"),tr("rDrunk"),tr("rGoal"),tr("rTr")],daily,yes:tr("rYes"),noData:tr("rNoData"),
       file:tr("rFile",{m:base.getFullYear()+"-"+String(base.getMonth()+1).padStart(2,"0")})
     };
