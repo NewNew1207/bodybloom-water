@@ -229,7 +229,9 @@ button.bar{border:0;background:none;padding:0;font:inherit;cursor:pointer}
 .cell.sel{outline:2px dashed var(--ink);outline-offset:1px}
 .bar.sel i{outline:2px dashed var(--ink);outline-offset:1px}
 
-.pdfbtn{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);border-color:var(--accent)}
+.pdfbtn{display:flex;align-items:center;justify-content:center;gap:8px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+#repLabel{text-align:center;flex:1;min-width:0}
 .pdfbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pdfbtn:disabled{opacity:.6;cursor:progress}
 
@@ -377,12 +379,28 @@ header{align-items:center}
       <div class="legend" id="legend"></div>
       <div class="mstats" id="mstats"></div>
       <div class="mix" id="mix" hidden></div>
-      <button class="btn ghost pdfbtn" id="pdfBtn" type="button">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>
-        <span id="pdfLbl" data-t="pdfBtn">Rapport als PDF</span>
-      </button>
-      <p class="hint" id="pdfMsg" aria-live="polite" hidden></p>
     </div>
+  </section>
+
+  <section class="card" id="repCard" data-t-aria="repTitle" aria-label="Rapport als PDF">
+    <div class="stats">
+      <div class="label" data-t="repTitle">Rapport als PDF</div>
+      <div class="seg" role="group" data-t-aria="repKind" aria-label="Soort rapport">
+        <button type="button" data-rk="d" aria-pressed="false" data-t="repD">Dag</button>
+        <button type="button" data-rk="w" aria-pressed="false" data-t="repW">Week</button>
+        <button type="button" data-rk="m" aria-pressed="true" data-t="repM">Maand</button>
+      </div>
+    </div>
+    <div class="mhead">
+      <button class="nav" id="repPrev" type="button" data-t-aria="repPrev" aria-label="Vorige periode">‹</button>
+      <b id="repLabel" aria-live="polite"></b>
+      <button class="nav" id="repNext" type="button" data-t-aria="repNext" aria-label="Volgende periode">›</button>
+    </div>
+    <button class="btn pdfbtn" id="pdfBtn" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/></svg>
+      <span id="pdfLbl">Maandrapport als PDF</span>
+    </button>
+    <p class="hint" id="pdfMsg" aria-live="polite" hidden></p>
   </section>
 
   <section class="tip">
@@ -462,12 +480,19 @@ header{align-items:center}
       dayPrev:"Vorige dag",dayNext:"Volgende dag",logSum:"{t} van {g} ml",
       pastHint:"Iets vergeten? Voeg het hier toe. Het soort drank kies je bovenaan.",pastTime:"Uur",pastTrain:"Trainingsdag",toToday:"Naar vandaag",
       emptyPast:"Niets genoteerd op deze dag.",toastPast:"{ml} ml toegevoegd op {d}",barLbl:"{d}: {t} van {g} ml, tik om te bekijken",
+      repTitle:"Rapport als PDF",repKind:"Soort rapport",repD:"Dag",repW:"Week",repM:"Maand",repPrev:"Vorige periode",repNext:"Volgende periode",
+      pdfBtnD:"Dagrapport als PDF",pdfBtnW:"Weekrapport als PDF",pdfBtnM:"Maandrapport als PDF",
+      rDayTitle:"Dagrapport",rWeekTitle:"Weekrapport",rMonthTitle:"Maandrapport",rChart:"Je week in beeld",rGoalLeg:"dagdoel",
+      rGlassTitle:"Glas per glas",rTime:"Uur",rDrink:"Drank",rAmount:"Hoeveelheid",rRun:"Totaal",
+      rDayDrunk:"gedronken",rDayGoal:"dagdoel",rDayPct:"van je doel",rGlasses:"glazen",rGlass1:"glas",
+      rTrainYes:"Infrarood trainingsdag.",rSess:"Sessie afgerond om {t}. Na je sessie: {x} van {g} ml binnen 2 uur.",
+      rFileD:"Body-Bloom-dagrapport-{d}.pdf",rFileW:"Body-Bloom-weekrapport-{d}.pdf",
       pdfBtn:"Rapport als PDF",pdfBusy:"PDF wordt gemaakt...",pdfDone:"PDF klaar. Je kan hem bewaren of afdrukken.",
       pdfFail:"De PDF kon niet gemaakt worden. Controleer je verbinding en probeer opnieuw.",pdfUnavail:"PDF opslaan werkt niet in deze weergave. Open de app via claude.ai of de Claude-app.",
       rTitle:"Drinkrapport",rBloom:"dagen in bloei",rAvg:"gemiddeld per dag",rTotal:"totaal",rTrain:"trainingsdagen",
       rGoalLine:"Dagdoel: {g} ml, +{b} ml op trainingsdagen. Richtwaarde, geen medisch advies.",rCal:"Kalender",rWeeks:"Per week",
       rWeekCol:"Week",rAvgPct:"Gem. %",rTotalCol:"Totaal",rBloomCol:"In bloei",rDaily:"Dag per dag",rDate:"Datum",rDrunk:"Gedronken",rGoal:"Doel",
-      rTr:"Training",rYes:"ja",rPage:"Pagina {p}/{n}",rAvgHead:"Gem.",rNoData:"Nog geen gegevens voor deze maand.",rFile:"Body-Bloom-drinkrapport-{m}.pdf",
+      rTr:"Training",rYes:"ja",rPage:"Pagina {p}/{n}",rAvgHead:"Gem.",rNoData:"Nog geen gegevens voor deze maand.",rFile:"Body-Bloom-maandrapport-{m}.pdf",
       favTitle:"Mijn fles",favNameLbl:"Naam van je fles",favMlLbl:"Inhoud (ml)",favHint:"Vul een inhoud in en je fles verschijnt als snelknop bovenaan.",favAdd:"Voeg {name} toe ({ml} ml)",toast:"{ml} ml {type} toegevoegd",undo:"Ongedaan",
       types:{water:"Water",thee:"Thee",citroen:"Water + citroen",koffie:"Koffie",smoothie:"Smoothie",soep:"Soep"},
       brands:{hepar:"Hépar",spa:"Spa Reine",panna:"Acqua Panna",other:"Ander water"},brandAria:"Welk water?",mixTitle:"Wat je dronk",
@@ -514,12 +539,19 @@ header{align-items:center}
       dayPrev:"Jour précédent",dayNext:"Jour suivant",logSum:"{t} sur {g} ml",
       pastHint:"Un oubli ? Ajoute-le ici. Le type de boisson se choisit en haut.",pastTime:"Heure",pastTrain:"Jour d'entraînement",toToday:"Retour à aujourd'hui",
       emptyPast:"Rien de noté ce jour-là.",toastPast:"{ml} ml ajoutés le {d}",barLbl:"{d} : {t} sur {g} ml, touche pour afficher",
+      repTitle:"Rapport en PDF",repKind:"Type de rapport",repD:"Jour",repW:"Semaine",repM:"Mois",repPrev:"Période précédente",repNext:"Période suivante",
+      pdfBtnD:"Rapport du jour en PDF",pdfBtnW:"Rapport de la semaine en PDF",pdfBtnM:"Rapport du mois en PDF",
+      rDayTitle:"Rapport du jour",rWeekTitle:"Rapport de la semaine",rMonthTitle:"Rapport du mois",rChart:"Ta semaine en un coup d'œil",rGoalLeg:"objectif du jour",
+      rGlassTitle:"Verre par verre",rTime:"Heure",rDrink:"Boisson",rAmount:"Quantité",rRun:"Total",
+      rDayDrunk:"bu",rDayGoal:"objectif du jour",rDayPct:"de ton objectif",rGlasses:"verres",rGlass1:"verre",
+      rTrainYes:"Jour d'entraînement infrarouge.",rSess:"Séance terminée à {t}. Après ta séance : {x} sur {g} ml en 2 heures.",
+      rFileD:"Body-Bloom-rapport-jour-{d}.pdf",rFileW:"Body-Bloom-rapport-semaine-{d}.pdf",
       pdfBtn:"Rapport en PDF",pdfBusy:"Création du PDF...",pdfDone:"PDF prêt. Tu peux l'enregistrer ou l'imprimer.",
       pdfFail:"Impossible de créer le PDF. Vérifie ta connexion et réessaie.",pdfUnavail:"L'enregistrement du PDF n'est pas disponible ici. Ouvre l'app via claude.ai ou l'app Claude.",
       rTitle:"Rapport d'hydratation",rBloom:"jours en fleur",rAvg:"moyenne par jour",rTotal:"total",rTrain:"jours d'entraînement",
       rGoalLine:"Objectif quotidien : {g} ml, +{b} ml les jours d'entraînement. Valeur indicative, pas un avis médical.",rCal:"Calendrier",rWeeks:"Par semaine",
       rWeekCol:"Semaine",rAvgPct:"Moy. %",rTotalCol:"Total",rBloomCol:"En fleur",rDaily:"Jour par jour",rDate:"Date",rDrunk:"Bu",rGoal:"Objectif",
-      rTr:"Entraînement",rYes:"oui",rPage:"Page {p}/{n}",rAvgHead:"Moy.",rNoData:"Pas encore de données pour ce mois.",rFile:"Body-Bloom-rapport-hydratation-{m}.pdf",
+      rTr:"Entraînement",rYes:"oui",rPage:"Page {p}/{n}",rAvgHead:"Moy.",rNoData:"Pas encore de données pour ce mois.",rFile:"Body-Bloom-rapport-mois-{m}.pdf",
       favTitle:"Ma bouteille",favNameLbl:"Nom de ta bouteille",favMlLbl:"Contenance (ml)",favHint:"Indique une contenance et ta bouteille apparaît en raccourci en haut.",favAdd:"Ajouter {name} ({ml} ml)",toast:"{ml} ml ajoutés ({type})",undo:"Annuler",
       types:{water:"Eau",thee:"Thé",citroen:"Eau + citron",koffie:"Café",smoothie:"Smoothie",soep:"Soupe"},
       brands:{hepar:"Hépar",spa:"Spa Reine",panna:"Acqua Panna",other:"Autre eau"},brandAria:"Quelle eau ?",mixTitle:"Ce que tu as bu",
@@ -542,7 +574,7 @@ header{align-items:center}
   const CACHE="bbwater-v1",LANGKEY="bbwater-lang";
   const $=id=>document.getElementById(id);
 
-  const S={settings:{goal:2000,weight:null,bonus:500},days:{},type:"water",mode:"local",remote:null,lang:"nl",view:"w",mOff:0,logDay:null,brand:"hepar"};
+  const S={settings:{goal:2000,weight:null,bonus:500},days:{},type:"water",mode:"local",remote:null,lang:"nl",view:"w",mOff:0,logDay:null,brand:"hepar",rk:null,ra:null};
   const SESS_WINDOW=120;
   const VIEWKEY="bbwater-view";
   const L=()=>I18N[S.lang]||I18N.nl;
@@ -676,7 +708,7 @@ header{align-items:center}
     persist(k);render();
   }
   function openDay(k){
-    S.logDay=k<todayKey()?k:null;render();
+    S.logDay=k<todayKey()?k:null;S.ra=k;render();
     const smooth=!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches);
     $("logCard").scrollIntoView({behavior:smooth?"smooth":"auto",block:"start"});
   }
@@ -778,7 +810,7 @@ header{align-items:center}
     $("streak").firstChild.nodeValue=String(streak);
     $("streak").querySelector("span").textContent=streak===1?tr("streak1"):tr("streakN");
 
-    renderView();renderSess(day,now);
+    renderView();renderSess(day,now);renderRep();
 
     // tip
     const start=new Date(now.getFullYear(),0,0);const doy=Math.floor((now-start)/864e5);
@@ -908,86 +940,55 @@ header{align-items:center}
 
   $("tabW").addEventListener("click",()=>{S.view="w";try{localStorage.setItem(VIEWKEY,"w")}catch(e){}renderView()});
   $("tabM").addEventListener("click",()=>{S.view="m";S.mOff=0;try{localStorage.setItem(VIEWKEY,"m")}catch(e){}renderView()});
-  $("mPrev").addEventListener("click",()=>{if(S.mOff>-24){S.mOff--;renderMonth()}});
-  $("mNext").addEventListener("click",()=>{if(S.mOff<0){S.mOff++;renderMonth()}});
+  function syncRepMonth(){if(S.rk!=="m")return;const n=new Date();const k=key(new Date(n.getFullYear(),n.getMonth()+S.mOff,1));S.ra=S.mOff===0?todayKey():k;renderRep()}
+  $("mPrev").addEventListener("click",()=>{if(S.mOff>-24){S.mOff--;renderMonth();syncRepMonth()}});
+  $("mNext").addEventListener("click",()=>{if(S.mOff<0){S.mOff++;renderMonth();syncRepMonth()}});
   $("sessDone").addEventListener("click",()=>{const d=today();d.training=true;d.sessionEnd=new Date().toISOString();d.goal=goalFor(d,true);persist(todayKey());render()});
   $("sessAdd").addEventListener("click",()=>add(250));
   $("sessReset").addEventListener("click",()=>{const d=today();delete d.sessionEnd;persist(todayKey());render()});
   try{if(localStorage.getItem(VIEWKEY)==="m")S.view="m"}catch(e){}
 
-  // ---------- monthly PDF report ----------
+  // ---------- PDF reports: day, week, month ----------
   /*PDF-START*/
-  function buildReport(jsPDF,D){
+  function pdfKit(jsPDF,D){
     const doc=new jsPDF({unit:"mm",format:"a4"});
-    const C={ink:"#2B1D1D",muted:"#7E6461",rose:"#B45C5B",arc:"#E39A95",blush:"#FCE3E0",zebra:"#FDF3F1",line:"#F1D6D2",l0:"#F7ECE9",l1:"#F6D3CF",l2:"#EDB4AF",l3:"#E39A95"};
-    const W=210,H=297,M=25,R=W-M;
+    const C={ink:"#2B1D1D",muted:"#7E6461",rose:"#B45C5B",arc:"#E39A95",blush:"#FCE3E0",zebra:"#FDF3F1",line:"#F1D6D2",l0:"#F7ECE9",l1:"#F6D3CF",l2:"#EDB4AF",l3:"#E39A95",soft:"#B9A3A0"};
+    const W=210,H=297,M=25,R=W-M,bottom=H-27;
     const s=x=>String(x).replace(/[  ]/g," ");
     const T=(t,x,y,o)=>doc.text(s(t),x,y,o||{});
     const font=(st,sz,col)=>{doc.setFont("helvetica",st);doc.setFontSize(sz);doc.setTextColor(col)};
-    function brand(){font("bold",16,C.ink);T("Body•Bloom",M,M+2);font("normal",10,C.muted);T("@body_bloom_be",R,M+2,{align:"right"})}
-    function footer(p,n){doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,H-19,R,H-19);font("normal",9,C.muted);T(D.footer,M,H-13);T(D.page(p,n),R,H-13,{align:"right"})}
-    function section(t,y){font("bold",13,C.ink);T(t,M,y);return y+7}
-    const level=lv=>[C.l0,C.l1,C.l2,C.l3][lv]||C.l0;
-
-    // page 1: summary, calendar, weeks
-    brand();
-    font("bold",24,C.rose);T(D.title,M,M+17);
-    font("normal",14,C.ink);T(D.month,M,M+25);
-    doc.setDrawColor(C.arc);doc.setLineWidth(.6);doc.line(M,M+30,R,M+30);
-    let y=M+37;
-    const bw=(R-M-12)/4,bh=25;
-    D.stats.forEach((st,i)=>{
-      const x=M+i*(bw+4);doc.setFillColor(C.blush);doc.roundedRect(x,y,bw,bh,3,3,"F");
-      font("bold",18,C.ink);T(st.v,x+4,y+10);
-      font("normal",9.5,C.muted);doc.splitTextToSize(s(st.l),bw-8).slice(0,2).forEach((ln,j)=>T(ln,x+4,y+16.5+j*4));
-    });
-    y+=bh+7;
-    font("normal",10,C.muted);doc.splitTextToSize(s(D.goalLine),R-M).forEach(ln=>{T(ln,M,y);y+=4.6});
-    y+=5;
-    y=section(D.calTitle,y);
-    const cw=17,ch=12,gap=2;
-    font("bold",9.5,C.muted);
-    D.heads.forEach((h,i)=>T(h.toUpperCase(),M+i*(cw+gap)+cw/2,y+3,{align:"center"}));
-    T(D.avgHead,R,y+3,{align:"right"});
-    y+=6;
-    D.cal.forEach(row=>{
-      row.cells.forEach((c,i)=>{
-        if(!c)return;const x=M+i*(cw+gap);
-        if(c.future){doc.setDrawColor(C.l0);doc.setLineWidth(.3);doc.roundedRect(x,y,cw,ch,2,2,"S");font("normal",11,"#B9A3A0")}
-        else{doc.setFillColor(level(c.lv));doc.roundedRect(x,y,cw,ch,2,2,"F");font("bold",11,C.ink)}
-        T(String(c.n),x+cw/2,y+7,{align:"center"});
-        if(c.tr){doc.setFillColor(c.lv===3?C.ink:C.rose);doc.circle(x+cw/2,y+10,.75,"F")}
+    const K={doc,C,W,H,M,R,bottom,s,T,font};
+    K.brand=()=>{font("bold",16,C.ink);T("Body•Bloom",M,M+2);font("normal",10,C.muted);T("@body_bloom_be",R,M+2,{align:"right"})};
+    K.section=(t,y)=>{font("bold",13,C.ink);T(t,M,y);return y+7};
+    K.level=lv=>[C.l0,C.l1,C.l2,C.l3][lv]||C.l0;
+    K.newPage=()=>{doc.addPage();K.brand();font("normal",11,C.muted);T(D.sub,M,M+10);return M+20};
+    K.ensure=(y,need)=>y+need>bottom?K.newPage():y;
+    K.header=()=>{
+      K.brand();font("bold",24,C.rose);T(D.title,M,M+17);
+      font("normal",14,C.ink);T(D.sub,M,M+25);
+      doc.setDrawColor(C.arc);doc.setLineWidth(.6);doc.line(M,M+30,R,M+30);
+      return M+37;
+    };
+    K.tiles=y=>{
+      const n=D.stats.length,bw=(R-M-(n-1)*4)/n,bh=25;
+      D.stats.forEach((st,i)=>{
+        const x=M+i*(bw+4);doc.setFillColor(C.blush);doc.roundedRect(x,y,bw,bh,3,3,"F");
+        font("bold",18,C.ink);T(st.v,x+4,y+10);
+        font("normal",9.5,C.muted);doc.splitTextToSize(s(st.l),bw-8).slice(0,2).forEach((ln,j)=>T(ln,x+4,y+16.5+j*4));
       });
-      if(row.avg){font("bold",10.5,C.muted);T(row.avg,R,y+7.3,{align:"right"})}
-      y+=ch+gap;
-    });
-    y+=2;font("normal",9,C.muted);
-    let lx=M;
-    D.legend.forEach(lg=>{
-      if(lg.dot){doc.setFillColor(C.rose);doc.circle(lx+1.5,y-1.2,.9,"F")}else{doc.setFillColor(level(lg.lv));doc.roundedRect(lx,y-3,3.6,3.6,.8,.8,"F")}
-      T(lg.t,lx+5.5,y);lx+=5.5+doc.getTextWidth(s(lg.t))+6;
-    });
-    y+=10;
-    if(D.weeks.length){
-      y=section(D.weeksTitle,y);
-      const cx={pct:M+92,tot:M+124,bl:R};
-      font("bold",9.5,C.muted);T(D.wkCols[0],M,y);T(D.wkCols[1],cx.pct,y,{align:"right"});T(D.wkCols[2],cx.tot,y,{align:"right"});T(D.wkCols[3],cx.bl,y,{align:"right"});
-      y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=5.6;
-      D.weeks.forEach(w=>{font("normal",11,C.ink);T(w.label,M,y);T(w.pct,cx.pct,y,{align:"right"});T(w.tot,cx.tot,y,{align:"right"});T(w.bl,cx.bl,y,{align:"right"});y+=7});
-    }
-    // page 2+: day by day, then the drink mix; new page when the bottom margin is reached
-    const bottom=H-27;
-    function newPage(){doc.addPage();brand();font("normal",11,C.muted);T(D.month,M,M+10);return M+20}
-    y=newPage();
-    y=section(D.dailyTitle,y);
-    if(!D.daily.length){font("normal",11,C.muted);T(D.noData,M,y+4)}
-    else{
+      y+=bh+7;
+      (D.notes||[]).forEach(nt=>{font(nt.bold?"bold":"normal",nt.bold?11:10,nt.bold?C.rose:C.muted);doc.splitTextToSize(s(nt.t),R-M).forEach(ln=>{T(ln,M,y);y+=nt.bold?5.4:4.6})});
+      return y+5;
+    };
+    K.dailyTable=y=>{
+      y=K.section(D.dailyTitle,y);
+      if(!D.daily.length){font("normal",11,C.muted);T(D.noData,M,y+4);return y+10}
       const X={dr:M+72,gl:M+96,bar:M+102,bw:22,pct:M+136,tr:R};
       font("bold",9.5,C.muted);T(D.dCols[0],M,y);T(D.dCols[1],X.dr,y,{align:"right"});T(D.dCols[2],X.gl,y,{align:"right"});T("%",X.pct,y,{align:"right"});T(D.dCols[3],X.tr,y,{align:"right"});
       y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=1;
       const rh=6.6;
       D.daily.forEach((d,i)=>{
-        if(y+rh>bottom){y=newPage()+4}
+        if(y+rh>bottom){y=K.newPage()+4}
         if(i%2===0){doc.setFillColor(C.zebra);doc.rect(M,y,R-M,rh,"F")}
         const by=y+rh/2;
         font(d.hit?"bold":"normal",10.5,C.ink);T(d.label,M+1.5,by+1.3);
@@ -999,73 +1000,298 @@ header{align-items:center}
         if(d.tr){font("normal",10.5,C.rose);T(D.yes,X.tr-1.5,by+1.3,{align:"right"})}
         y+=rh;
       });
+      return y;
+    };
+    K.mixBlock=y=>{
+      if(!D.mix.length)return y;
+      const n=D.mix.length,rows2=Math.ceil(n/2);
+      const one=8+7+n*7.5,two=8+7+rows2*7.5;
+      // one column when it fits, two columns when only that fits, else a new page
+      let cols=1;
+      if(y+one>bottom){if(y+two<=bottom)cols=2;else y=K.newPage()-8}
+      y=K.section(D.mixTitle,y+8);
+      if(cols===1){
+        const X={l:M+92,bar:M+98,bw:44,p:R};
+        D.mix.forEach(x=>{
+          font("bold",11,C.ink);T(x.label,M,y+1);
+          font("normal",11,C.ink);T(x.l,X.l,y+1,{align:"right"});
+          doc.setFillColor(C.l0);doc.roundedRect(X.bar,y-1.6,X.bw,2.8,1.4,1.4,"F");
+          doc.setFillColor(C.l3);doc.roundedRect(X.bar,y-1.6,Math.max(2.8,x.p*X.bw),2.8,1.4,1.4,"F");
+          font("bold",11,C.muted);T(x.pct,X.p,y+1,{align:"right"});
+          y+=7.5;
+        });
+        return y;
+      }
+      const cw=(R-M-10)/2;
+      D.mix.forEach((x,i)=>{
+        const x0=M+(i%2)*(cw+10),yy=y+Math.floor(i/2)*7.5;
+        font("bold",11,C.ink);T(x.label,x0,yy+1);
+        font("normal",11,C.ink);T(x.l,x0+cw-30,yy+1,{align:"right"});
+        doc.setFillColor(C.l0);doc.roundedRect(x0+cw-27,yy-1.6,16,2.8,1.4,1.4,"F");
+        doc.setFillColor(C.l3);doc.roundedRect(x0+cw-27,yy-1.6,Math.max(2.8,x.p*16),2.8,1.4,1.4,"F");
+        font("bold",11,C.muted);T(x.pct,x0+cw,yy+1,{align:"right"});
+      });
+      return y+rows2*7.5;
+    };
+    K.finish=()=>{
+      const n=doc.getNumberOfPages();
+      for(let p=1;p<=n;p++){doc.setPage(p);doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,H-19,R,H-19);font("normal",9,C.muted);T(D.footer,M,H-13);T(D.page(p,n),R,H-13,{align:"right"})}
+      return doc;
+    };
+    return K;
+  }
+
+  function buildMonth(jsPDF,D){
+    const K=pdfKit(jsPDF,D);const {doc,C,M,R,T,font,s}=K;
+    let y=K.tiles(K.header());
+    y=K.section(D.calTitle,y);
+    const cw=17,ch=12,gap=2;
+    font("bold",9.5,C.muted);
+    D.heads.forEach((h,i)=>T(h.toUpperCase(),M+i*(cw+gap)+cw/2,y+3,{align:"center"}));
+    T(D.avgHead,R,y+3,{align:"right"});
+    y+=6;
+    D.cal.forEach(row=>{
+      row.cells.forEach((c,i)=>{
+        if(!c)return;const x=M+i*(cw+gap);
+        if(c.future){doc.setDrawColor(C.l0);doc.setLineWidth(.3);doc.roundedRect(x,y,cw,ch,2,2,"S");font("normal",11,C.soft)}
+        else{doc.setFillColor(K.level(c.lv));doc.roundedRect(x,y,cw,ch,2,2,"F");font("bold",11,C.ink)}
+        T(String(c.n),x+cw/2,y+7,{align:"center"});
+        if(c.tr){doc.setFillColor(c.lv===3?C.ink:C.rose);doc.circle(x+cw/2,y+10,.75,"F")}
+      });
+      if(row.avg){font("bold",10.5,C.muted);T(row.avg,R,y+7.3,{align:"right"})}
+      y+=ch+gap;
+    });
+    y+=2;font("normal",9,C.muted);
+    let lx=M;
+    D.legend.forEach(lg=>{
+      if(lg.dot){doc.setFillColor(C.rose);doc.circle(lx+1.5,y-1.2,.9,"F")}else{doc.setFillColor(K.level(lg.lv));doc.roundedRect(lx,y-3,3.6,3.6,.8,.8,"F")}
+      T(lg.t,lx+5.5,y);lx+=5.5+doc.getTextWidth(s(lg.t))+6;
+    });
+    y+=10;
+    if(D.weeks.length){
+      y=K.section(D.weeksTitle,y);
+      const cx={pct:M+92,tot:M+124,bl:R};
+      font("bold",9.5,C.muted);T(D.wkCols[0],M,y);T(D.wkCols[1],cx.pct,y,{align:"right"});T(D.wkCols[2],cx.tot,y,{align:"right"});T(D.wkCols[3],cx.bl,y,{align:"right"});
+      y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=5.6;
+      D.weeks.forEach(w=>{font("normal",11,C.ink);T(w.label,M,y);T(w.pct,cx.pct,y,{align:"right"});T(w.tot,cx.tot,y,{align:"right"});T(w.bl,cx.bl,y,{align:"right"});y+=7});
     }
-    if(D.mix.length){
-      const need=12+D.mix.length*8;
-      if(y+12+need>bottom)y=newPage();else y+=12;
-      y=section(D.mixTitle,y);
-      const X={l:M+92,bar:M+98,bw:44,p:R};
-      D.mix.forEach(x=>{
-        font("bold",11,C.ink);T(x.label,M,y+1);
-        font("normal",11,C.ink);T(x.l,X.l,y+1,{align:"right"});
-        doc.setFillColor(C.l0);doc.roundedRect(X.bar,y-1.6,X.bw,2.8,1.4,1.4,"F");
-        doc.setFillColor(C.l3);doc.roundedRect(X.bar,y-1.6,Math.max(2.8,x.p*X.bw),2.8,1.4,1.4,"F");
-        font("bold",11,C.muted);T(x.pct,X.p,y+1,{align:"right"});
-        y+=8;
+    y=K.dailyTable(K.newPage());
+    K.mixBlock(y);
+    return K.finish();
+  }
+
+  function buildWeek(jsPDF,D){
+    const K=pdfKit(jsPDF,D);const {doc,C,M,R,T,font}=K;
+    let y=K.tiles(K.header());
+    // bar chart: one bar per day, dashed goal line
+    y=K.section(D.chartTitle,y);
+    const top=y+7,hgt=34,base=top+hgt,colW=(R-M)/7,bw=11;
+    const maxV=Math.max(1,...D.chart.map(c=>Math.max(c.t,c.g*1.2)));
+    const Y=v=>base-hgt*Math.min(v,maxV)/maxV;
+    doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,base,R,base);
+    D.chart.forEach((c,i)=>{
+      const cx=M+colW*i+colW/2;
+      // goal tick per day (goal can differ on training days), drawn first so bars and labels sit on top
+      const gy=Y(c.g);doc.setDrawColor(C.rose);doc.setLineWidth(.5);doc.setLineDashPattern([1.2,1],0);doc.line(cx-colW/2+1.5,gy,cx+colW/2-1.5,gy);doc.setLineDashPattern([],0);
+      if(!c.future&&c.t>0){
+        const yy=Y(c.t);doc.setFillColor(c.t>=c.g?C.rose:C.l3);
+        doc.roundedRect(cx-bw/2,yy,bw,Math.max(1.2,base-yy),1.6,1.6,"F");
+        font("bold",9,c.t>=c.g?C.rose:C.ink);const tw=doc.getTextWidth(K.s(c.v));
+        doc.setFillColor("#FFFFFF");doc.rect(cx-tw/2-1,yy-5.2,tw+2,4,"F");
+        T(c.v,cx,yy-2,{align:"center"});
+      }else if(!c.future){doc.setFillColor(C.l0);doc.roundedRect(cx-bw/2,base-1.2,bw,1.2,.6,.6,"F")}
+      font(c.today?"bold":"normal",9.5,c.future?C.soft:C.ink);T(c.lbl,cx,base+5,{align:"center"});
+      if(c.tr){doc.setFillColor(C.rose);doc.circle(cx,base+8,.8,"F")}
+    });
+    y=base+12;
+    font("normal",9,C.muted);
+    doc.setDrawColor(C.rose);doc.setLineWidth(.5);doc.setLineDashPattern([1.2,1],0);doc.line(M,y-1.2,M+7,y-1.2);doc.setLineDashPattern([],0);
+    T(D.goalLeg,M+9,y);
+    let lx=M+9+doc.getTextWidth(K.s(D.goalLeg))+7;
+    doc.setFillColor(C.rose);doc.circle(lx+1,y-1.2,.9,"F");T(D.trLeg,lx+4,y);
+    y+=7;
+    y=K.ensure(y,14+D.daily.length*6.6);
+    y=K.dailyTable(y);
+    K.mixBlock(y);
+    return K.finish();
+  }
+
+  function buildDay(jsPDF,D){
+    const K=pdfKit(jsPDF,D);const {doc,C,M,R,T,font,bottom}=K;
+    let y=K.tiles(K.header());
+    y=K.section(D.glassTitle,y);
+    if(!D.entries.length){font("normal",11,C.muted);T(D.noData,M,y+4);y+=10}
+    else{
+      const X={dr:M+48,ml:M+100,run:M+124,bar:M+130,bw:22,pct:R};
+      font("bold",9.5,C.muted);T(D.eCols[0],M,y);T(D.eCols[1],X.dr,y);T(D.eCols[2],X.ml,y,{align:"right"});T(D.eCols[3],X.run,y,{align:"right"});T("%",X.pct,y,{align:"right"});
+      y+=2;doc.setDrawColor(C.line);doc.setLineWidth(.3);doc.line(M,y,R,y);y+=1;
+      const rh=7.2;
+      D.entries.forEach((e,i)=>{
+        if(y+rh>bottom){y=K.newPage()+4}
+        if(i%2===0){doc.setFillColor(C.zebra);doc.rect(M,y,R-M,rh,"F")}
+        const by=y+rh/2+1.4;
+        font("normal",11,C.muted);T(e.time,M+1.5,by);
+        font("bold",11,C.ink);T(e.drink,X.dr,by);
+        font("normal",11,C.ink);T(e.ml,X.ml,by,{align:"right"});T(e.run,X.run,by,{align:"right"});
+        doc.setFillColor(C.l0);doc.roundedRect(X.bar,by-2.7,X.bw,2.6,1.3,1.3,"F");
+        doc.setFillColor(e.p>=1?C.rose:C.l3);doc.roundedRect(X.bar,by-2.7,Math.max(2.6,Math.min(e.p,1)*X.bw),2.6,1.3,1.3,"F");
+        font("bold",11,e.p>=1?C.rose:C.ink);T(e.pct,X.pct,by,{align:"right"});
+        y+=rh;
       });
     }
-    const n=doc.getNumberOfPages();
-    for(let p=1;p<=n;p++){doc.setPage(p);footer(p,n)}
-    return doc;
+    K.mixBlock(y);
+    return K.finish();
   }
   /*PDF-END*/
+
+  // ---------- report data ----------
+  const pctF=v=>Math.round(v*100)+"%";
+  const litF=()=>new Intl.NumberFormat(L().locale,{minimumFractionDigits:1,maximumFractionDigits:1});
+  function cap(t){return t.charAt(0).toUpperCase()+t.slice(1)}
+  function mondayOf(k){const d=keyToDate(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return key(d)}
+  function mixOf(keys){
+    const m=new Map();
+    keys.forEach(k=>((S.days[k]||{}).entries||[]).forEach(e=>{const mk=mixKey(e);m.set(mk,(m.get(mk)||0)+(e.ml||0))}));
+    const total=[...m.values()].reduce((a,b)=>a+b,0);
+    return [...m.entries()].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([k,ml])=>({label:mixLabel(k),ml,p:total?ml/total:0}));
+  }
+  function mixRows(keys){const lit=litF();return mixOf(keys).map(x=>({label:x.label,l:lit.format(x.ml/1000)+" L",p:x.p,pct:pctF(x.p)}))}
+  function dayRow(k){
+    const tk=todayKey(),isT=k===tk,dd=S.days[k]||{entries:[]},t=sum(dd),g=goalFor(dd,isT);
+    return {label:keyToDate(k).toLocaleDateString(L().locale,{weekday:"short",day:"numeric",month:"short"}),t:fmt(t)+" ml",g:fmt(g),p:g?t/g:0,pct:pctF(g?t/g:0),hit:t>0&&t>=g,tr:!!dd.training};
+  }
+  function summary(keys){
+    const tk=todayKey();let logged=0,total=0,bloom=0,trainDays=0;
+    keys.forEach(k=>{const dd=S.days[k]||{entries:[]};const t=sum(dd);const g=goalFor(dd,k===tk);if(dd.training)trainDays++;if(t>0){logged++;total+=t;if(t>=g)bloom++}});
+    const lit=litF();
+    return [
+      {v:String(bloom),l:tr("rBloom")},
+      {v:logged?lit.format(total/logged/1000)+" L":"-",l:tr("rAvg")},
+      {v:lit.format(total/1000)+" L",l:tr("rTotal")},
+      {v:String(trainDays),l:tr("rTrain")}
+    ];
+  }
+  function common(){return {footer:tr("footer"),page:(p,n)=>tr("rPage",{p,n}),yes:tr("rYes"),mixTitle:tr("mixTitle"),
+    dailyTitle:tr("rDaily"),dCols:[tr("rDate"),tr("rDrunk"),tr("rGoal"),tr("rTr")],noData:tr("rNoData"),
+    goalNote:{t:tr("rGoalLine",{g:fmt(S.settings.goal),b:fmt(S.settings.bonus)})}}}
 
   function reportData(off){
     const now=new Date();const loc=L().locale;const tkey=todayKey();
     const base=new Date(now.getFullYear(),now.getMonth()+off,1);
     const dim=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
     const lead=(base.getDay()+6)%7;const rows=Math.ceil((lead+dim)/7);
-    const pctF=v=>Math.round(v*100)+"%";
-    const lit=new Intl.NumberFormat(loc,{minimumFractionDigits:1,maximumFractionDigits:1});
-    let logged=0,total=0,bloom=0,trainDays=0;const cal=[],weeks=[],daily=[];
+    const lit=litF();const cal=[],weeks=[],keys=[];
     for(let r=0;r<rows;r++){
       const cells=[];let pSum=0,pN=0,wTot=0,wBl=0,first=null,last=null;
       for(let c=0;c<7;c++){
         const n=r*7+c-lead+1;if(n<1||n>dim){cells.push(null);continue}
         const d=new Date(base.getFullYear(),base.getMonth(),n);const k=key(d);
         if(k>tkey){cells.push({n,future:true});continue}
-        const isT=k===tkey;const dd=S.days[k]||{entries:[]};const t=sum(dd);const g=goalFor(dd,isT);const lv=level(dd,isT);
+        keys.push(k);
+        const isT=k===tkey;const dd=S.days[k]||{entries:[]};const t=sum(dd);const g=goalFor(dd,isT);
         first=first||d;last=d;
-        if(dd.training)trainDays++;
-        if(t>0){logged++;total+=t;pSum+=Math.min(t/g,1.5);pN++;wTot+=t;if(t>=g){bloom++;wBl++}}
-        cells.push({n,lv,tr:!!dd.training});
-        daily.push({label:d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"}),t:fmt(t)+" ml",g:fmt(g),p:g?t/g:0,pct:pctF(g?t/g:0),hit:t>0&&t>=g,tr:!!dd.training});
+        if(t>0){pSum+=Math.min(t/g,1.5);pN++;wTot+=t;if(t>=g)wBl++}
+        cells.push({n,lv:level(dd,isT),tr:!!dd.training});
       }
       const avg=pN?pctF(pSum/pN):"";
       cal.push({cells,avg});
       if(first){
         const f=first.toLocaleDateString(loc,{day:"numeric",month:"short"}),l=last.toLocaleDateString(loc,{day:"numeric",month:"short"});
-        weeks.push({label:f===l?f:f+" - "+l,pct:avg||"-",tot:lit.format(wTot/1000)+" L",bl:String(wBl)});
+        weeks.push({label:f===l?f:f+" - "+l,pct:avg||"-",tot:lit.format(wTot/1000)+" L",bl:String(wBl),n:pN});
       }
     }
-    const monthName=base.toLocaleDateString(loc,{month:"long",year:"numeric"});
-    return {
-      title:tr("rTitle"),month:monthName.charAt(0).toUpperCase()+monthName.slice(1),footer:tr("footer"),
-      page:(p,n)=>tr("rPage",{p,n}),
-      stats:[
-        {v:String(bloom),l:tr("rBloom")},
-        {v:logged?lit.format(total/logged/1000)+" L":"-",l:tr("rAvg")},
-        {v:lit.format(total/1000)+" L",l:tr("rTotal")},
-        {v:String(trainDays),l:tr("rTrain")}
-      ],
-      goalLine:tr("rGoalLine",{g:fmt(S.settings.goal),b:fmt(S.settings.bonus)}),
+    const C0=common();
+    return Object.assign(C0,{
+      title:tr("rMonthTitle"),sub:cap(base.toLocaleDateString(loc,{month:"long",year:"numeric"})),
+      stats:summary(keys),notes:[C0.goalNote],
       calTitle:tr("rCal"),heads:[1,2,3,4,5,6,0].map(i=>L().days[i]),avgHead:tr("rAvgHead"),cal,
       legend:[{lv:1,t:tr("lgL1")},{lv:2,t:tr("lgL2")},{lv:3,t:tr("lgL3")},{dot:true,t:tr("lgTr")}],
-      weeksTitle:tr("rWeeks"),wkCols:[tr("rWeekCol"),tr("rAvgPct"),tr("rTotalCol"),tr("rBloomCol")],weeks:logged?weeks:[],
-      mixTitle:tr("mixTitle"),mix:monthMix(base).map(x=>({label:x.label,l:lit.format(x.ml/1000)+" L",p:x.p,pct:Math.round(x.p*100)+"%"})),
-      dailyTitle:tr("rDaily"),dCols:[tr("rDate"),tr("rDrunk"),tr("rGoal"),tr("rTr")],daily,yes:tr("rYes"),noData:tr("rNoData"),
+      weeksTitle:tr("rWeeks"),wkCols:[tr("rWeekCol"),tr("rAvgPct"),tr("rTotalCol"),tr("rBloomCol")],weeks:weeks.some(w=>w.n)?weeks:[],
+      mix:mixRows(keys),daily:keys.map(dayRow),
       file:tr("rFile",{m:base.getFullYear()+"-"+String(base.getMonth()+1).padStart(2,"0")})
-    };
+    });
+  }
+
+  function weekRange(mon){
+    const loc=L().locale;const a=keyToDate(mon),b=keyToDate(shiftKey(mon,6));
+    return a.toLocaleDateString(loc,{day:"numeric",month:"short"})+" - "+b.toLocaleDateString(loc,{day:"numeric",month:"short",year:"numeric"});
+  }
+  function weekData(anchor){
+    const tk=todayKey();const mon=mondayOf(anchor);
+    const all=[0,1,2,3,4,5,6].map(i=>shiftKey(mon,i));const keys=all.filter(k=>k<=tk);
+    const lit=litF();const C0=common();
+    return Object.assign(C0,{
+      title:tr("rWeekTitle"),sub:weekRange(mon),stats:summary(keys),notes:[C0.goalNote],
+      chartTitle:tr("rChart"),goalLeg:tr("rGoalLeg"),trLeg:tr("lgTr"),
+      chart:all.map(k=>{const d=keyToDate(k),dd=S.days[k]||{entries:[]},t=sum(dd);
+        return {lbl:L().days[d.getDay()]+" "+d.getDate(),t,g:goalFor(dd,k===tk),v:lit.format(t/1000)+" L",future:k>tk,today:k===tk,tr:!!dd.training}}),
+      daily:keys.map(dayRow),mix:mixRows(keys),
+      file:tr("rFileW",{d:mon.slice(1)})
+    });
+  }
+
+  function dayData(k){
+    const tk=todayKey(),isT=k===tk,dd=S.days[k]||{entries:[],training:false},t=sum(dd),g=goalFor(dd,isT),loc=L().locale;
+    const es=(dd.entries||[]).slice().sort((a,b)=>a.t<b.t?-1:a.t>b.t?1:0);
+    let run=0;
+    const entries=es.map(e=>{run+=e.ml||0;return {time:new Date(e.t).toLocaleTimeString(loc,{hour:"2-digit",minute:"2-digit"}),drink:entryLabel(e),ml:fmt(e.ml)+" ml",run:fmt(run)+" ml",p:g?run/g:0,pct:pctF(g?run/g:0)}});
+    const C0=common();const notes=[];
+    if(dd.training){
+      notes.push({t:tr("rTrainYes"),bold:true});
+      if(dd.sessionEnd){
+        const end=new Date(dd.sessionEnd).getTime(),lim=end+SESS_WINDOW*60000;
+        const x=es.reduce((a,e)=>{const ti=new Date(e.t).getTime();return ti>=end&&ti<=lim?a+e.ml:a},0);
+        notes.push({t:tr("rSess",{t:new Date(end).toLocaleTimeString(loc,{hour:"2-digit",minute:"2-digit"}),x:fmt(x),g:fmt(sessGoal())})});
+      }
+    }
+    notes.push(C0.goalNote);
+    return Object.assign(C0,{
+      title:tr("rDayTitle"),sub:cap(keyToDate(k).toLocaleDateString(loc,{weekday:"long",day:"numeric",month:"long",year:"numeric"})),
+      stats:[
+        {v:fmt(t)+" ml",l:tr("rDayDrunk")},
+        {v:fmt(g)+" ml",l:tr("rDayGoal")},
+        {v:pctF(g?t/g:0),l:tr("rDayPct")},
+        {v:String(es.length),l:es.length===1?tr("rGlass1"):tr("rGlasses")}
+      ],notes,
+      glassTitle:tr("rGlassTitle"),eCols:[tr("rTime"),tr("rDrink"),tr("rAmount"),tr("rRun")],entries,noData:tr("emptyPast"),
+      mix:mixRows([k]),
+      file:tr("rFileD",{d:k.slice(1)})
+    });
+  }
+
+  // ---------- report picker ----------
+  const REPKEY="bbwater-rep";
+  try{const r=localStorage.getItem(REPKEY);if(r==="d"||r==="w"||r==="m")S.rk=r}catch(e){}
+  if(!S.rk)S.rk="m";
+  function repAnchor(){const tk=todayKey();if(!S.ra||S.ra>tk)S.ra=tk;return S.ra}
+  function monthOffOf(k){const d=keyToDate(k),n=new Date();return (d.getFullYear()*12+d.getMonth())-(n.getFullYear()*12+n.getMonth())}
+  function firstOfMonthKey(k){const d=keyToDate(k);return key(new Date(d.getFullYear(),d.getMonth(),1))}
+  function renderRep(){
+    const a=repAnchor(),tk=todayKey(),loc=L().locale;
+    document.querySelectorAll("[data-rk]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.rk===S.rk?"true":"false"));
+    let lbl,nextOk;
+    if(S.rk==="d"){lbl=a===tk?tr("today")+" · "+dayLabel(a,true):cap(dayLabel(a));nextOk=a<tk}
+    else if(S.rk==="w"){const mon=mondayOf(a);lbl=weekRange(mon);nextOk=shiftKey(mon,7)<=tk}
+    else{lbl=cap(keyToDate(a).toLocaleDateString(loc,{month:"long",year:"numeric"}));nextOk=monthOffOf(a)<0}
+    $("repLabel").textContent=lbl;
+    $("repNext").disabled=!nextOk;$("repPrev").disabled=a<=shiftKey(tk,-730);
+    $("pdfLbl").textContent=tr(S.rk==="d"?"pdfBtnD":S.rk==="w"?"pdfBtnW":"pdfBtnM");
+  }
+  function repShift(dir){
+    const a=repAnchor(),tk=todayKey();let n;
+    if(S.rk==="d")n=shiftKey(a,dir);
+    else if(S.rk==="w")n=shiftKey(a,dir*7);
+    else{const d=keyToDate(a);n=key(new Date(d.getFullYear(),d.getMonth()+dir,1))}
+    S.ra=n>tk?tk:n;pdfMsg("");renderRep();
+  }
+  document.querySelectorAll("[data-rk]").forEach(b=>b.addEventListener("click",()=>{S.rk=b.dataset.rk;try{localStorage.setItem(REPKEY,S.rk)}catch(e){}pdfMsg("");renderRep()}));
+  $("repPrev").addEventListener("click",()=>repShift(-1));
+  $("repNext").addEventListener("click",()=>repShift(1));
+  function currentReport(jsPDF){
+    const a=repAnchor();
+    if(S.rk==="d"){const D=dayData(a);return {D,doc:buildDay(jsPDF,D)}}
+    if(S.rk==="w"){const D=weekData(a);return {D,doc:buildWeek(jsPDF,D)}}
+    const D=reportData(monthOffOf(a));return {D,doc:buildMonth(jsPDF,D)};
   }
 
   let jsPDFPromise=null;
@@ -1092,7 +1318,7 @@ header{align-items:center}
       // standalone (e.g. GitHub Pages): build synchronously when the library is ready, so the share sheet keeps the tap
       if(!inClaude){
         const jsPDF=window.jspdf&&window.jspdf.jsPDF?window.jspdf.jsPDF:await loadJsPDF();
-        const D=reportData(S.mOff);const doc=buildReport(jsPDF,D);
+        const {D,doc}=currentReport(jsPDF);
         let shared=false;
         try{
           const file=new File([doc.output("blob")],D.file,{type:"application/pdf"});
@@ -1104,9 +1330,8 @@ header{align-items:center}
       const dl=await window.claude.use("downloads");
       if(!dl){pdfMsg(tr("pdfUnavail"));return}
       const jsPDF=await loadJsPDF();
-      const D=reportData(S.mOff);
-      const buf=buildReport(jsPDF,D).output("arraybuffer");
-      await dl.save({filename:D.file,data:buf});
+      const {D,doc}=currentReport(jsPDF);
+      await dl.save({filename:D.file,data:doc.output("arraybuffer")});
       pdfMsg(tr("pdfDone"));
     }catch(e){
       const c=e&&e.code;
@@ -1121,6 +1346,7 @@ header{align-items:center}
   setInterval(render,60000);
   document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
   connect();
+  setTimeout(()=>{loadJsPDF().catch(()=>{})},1500);
 })();
 </script>
 
